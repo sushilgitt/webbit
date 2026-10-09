@@ -1,4 +1,6 @@
 .index {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -6,15 +8,37 @@
   justify-content: center;
   padding: 48px 20px;
   box-sizing: border-box;
-  color: #1C1530;
+  color: #fff;
   font-family: "DM Sans", system-ui, sans-serif;
-  background:
-    radial-gradient(680px 320px at 100% 0%, rgba(168, 85, 247, 0.16), transparent 65%),
-    radial-gradient(620px 300px at 0% 100%, rgba(255, 107, 87, 0.14), transparent 65%),
-    #FBF8F4;
+  background: #E20613;
+}
+
+/* Signature shapes: a big peach arc rising from the bottom right and a white
+   curve sweeping across the bottom edge. */
+.index::before {
+  content: "";
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  right: -260px;
+  bottom: -520px;
+  border-radius: 50%;
+  background: #F7C5AE;
+}
+.index::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  right: -10%;
+  bottom: -90px;
+  height: 160px;
+  border-radius: 50%;
+  background: #FFF8F4;
 }
 
 .content {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 20px;
   max-width: 880px;
@@ -28,10 +52,10 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font: 600 13px/1 "Sora", sans-serif;
-  letter-spacing: 0.08em;
+  font: 600 13px/1 "Poppins", sans-serif;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #7C3AED;
+  color: #fff;
 }
 
 .mark {
@@ -40,25 +64,24 @@
   grid-template-rows: repeat(2, 7px);
   gap: 2px;
 }
-.mark i { display: block; border-radius: 2px; }
-.mark i:nth-child(1) { background: #7C3AED; }
-.mark i:nth-child(2) { background: #FF6B57; }
-.mark i:nth-child(3) { background: #FFB547; grid-column: 2; }
+.mark i { display: block; border-radius: 3px; }
+.mark i:nth-child(1) { background: #fff; }
+.mark i:nth-child(2) { background: #F7C5AE; }
+.mark i:nth-child(3) { background: #F7B52C; grid-column: 2; }
 
 .heading {
   margin: 0;
-  font-family: "Sora", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: clamp(34px, 6vw, 56px);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
 }
 .heading em {
   font-style: normal;
-  background: linear-gradient(120deg, #7C3AED 0%, #A855F7 55%, #FF6B57 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-decoration: underline 7px #F7B52C;
+  text-underline-offset: 8px;
+  text-decoration-skip-ink: none;
 }
 
 .text {
@@ -66,7 +89,7 @@
   max-width: 560px;
   font-size: 16px;
   line-height: 1.6;
-  color: #6B6478;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .list {
@@ -80,21 +103,21 @@
 
 .list > li {
   text-align: left;
-  padding: 18px;
-  border-radius: 18px;
+  padding: 20px;
+  border-radius: 22px;
   background: #fff;
-  border: 1px solid #ECE6DD;
+  box-shadow: 0 16px 36px rgba(47, 46, 65, 0.16);
   font-size: 14px;
   line-height: 1.55;
-  color: #6B6478;
+  color: #6C6A7D;
 }
 
 .list > li strong {
   display: block;
   margin-bottom: 4px;
-  font-family: "Sora", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 16px;
-  color: #1C1530;
+  color: #2F2E41;
 }
 
 @media only screen and (max-width: 50rem) {
@@ -105,10 +128,10 @@
 
 .note {
   margin: 0 auto;
-  padding: 12px 18px;
+  padding: 12px 20px;
   border-radius: 999px;
-  background: #F3EEFF;
-  color: #5B21B6;
+  background: #2F2E41;
+  color: #fff;
   font-size: 14px;
   font-weight: 500;
 }

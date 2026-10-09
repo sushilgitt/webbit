@@ -12,7 +12,7 @@ import { getUsage } from "../usage.server";
 import { PLAN_TIERS } from "../planCatalog";
 import { Page, Layout, BlockStack, Banner } from "@shopify/polaris";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { Mosaic, PixelMeter } from "../components/Pixels";
+import { Arc, PixelMeter } from "../components/Pixels";
 
 // Human labels for the entitlement flags, shown as the current plan's inclusions.
 const FEATURE_LABELS = {
@@ -112,7 +112,7 @@ export default function BillingPage() {
         <Layout.Section>
           <BlockStack gap="400">
             <div className="pp-plan-card">
-              <Mosaic />
+              <Arc />
               <div>
                 <p className="pp-plan-label">{hasActivePlan ? "Active plan" : "Current plan"}</p>
                 <p className="pp-plan-name">{planName}</p>

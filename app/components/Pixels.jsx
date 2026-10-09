@@ -1,5 +1,5 @@
-// Webbit brand primitives: the three-pixel logo mark, a decorative pixel
-// mosaic, and a 20-square "pixel meter" used for usage / progress displays.
+// Webbit brand primitives: the three-block logo mark, the decorative peach
+// arc, and a 20-cell meter used for usage / progress displays.
 
 export function BrandMark() {
   return (
@@ -9,17 +9,10 @@ export function BrandMark() {
   );
 }
 
-// Fixed pattern so server and client render identically (no hydration drift).
-const MOSAIC = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1];
-
-export function Mosaic({ cells = 24 }) {
-  return (
-    <span className="pp-mosaic" aria-hidden="true">
-      {MOSAIC.slice(0, cells).map((on, i) => (
-        <i key={i} style={on ? undefined : { visibility: "hidden" }} />
-      ))}
-    </span>
-  );
+// Decorative peach arc — the theme's signature shape. Positioned by the
+// parent's CSS (.pp-arc), so it needs no props.
+export function Arc() {
+  return <span className="pp-arc" aria-hidden="true" />;
 }
 
 export function PixelMeter({ pct = 0, light = false, label }) {

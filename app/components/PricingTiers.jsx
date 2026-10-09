@@ -1,5 +1,5 @@
 import { PLAN_TIERS } from "../planCatalog";
-import { BrandMark, Mosaic } from "./Pixels";
+import { BrandMark, Arc } from "./Pixels";
 
 // Plan comparison used by both the standalone pricing page and the in-app
 // pricing wall. Presentational only: every plan CTA is a real top-frame link
@@ -13,7 +13,7 @@ import { BrandMark, Mosaic } from "./Pixels";
 export default function PricingTiers({ pricingUrl }) {
   return (
     <div className="pp-pricing">
-      <Mosaic />
+      <Arc />
       <header className="pp-pricing-head">
         <p className="pp-kicker"><BrandMark />WEBBIT</p>
         <h1>

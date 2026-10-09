@@ -15,7 +15,7 @@ import {
   ImagesIcon,
   CheckCircleIcon,
 } from "@shopify/polaris-icons";
-import { BrandMark, Mosaic, PixelMeter } from "../components/Pixels";
+import { BrandMark, Arc, PixelMeter } from "../components/Pixels";
 
 export const loader = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
@@ -123,18 +123,18 @@ export default function Index() {
             storefront get quicker — all from one calm dashboard.
           </p>
           <div className="pp-actions">
-            <button type="button" className="pp-btn pp-btn-primary" onClick={() => navigate("/app/optimize")}>
+            <button type="button" className="pp-btn pp-btn-white" onClick={() => navigate("/app/optimize")}>
               Compress images
             </button>
-            <button type="button" className="pp-btn pp-btn-outline" onClick={() => navigate("/app/plan")}>
+            <button type="button" className="pp-btn pp-btn-glass" onClick={() => navigate("/app/plan")}>
               View plan
             </button>
           </div>
-          <Mosaic />
+          <Arc />
         </div>
 
         <div className="pp-usage-card">
-          <Mosaic />
+          <Arc />
           <div>
             <p className="pp-usage-label">{`${plan.name} · this month`}</p>
             <p className="pp-usage-big">
@@ -142,7 +142,7 @@ export default function Index() {
             </p>
             <p className="pp-usage-foot">images compressed</p>
           </div>
-          <PixelMeter pct={pct} label={`${pct}% of monthly images used`} />
+          <PixelMeter pct={pct} light label={`${pct}% of monthly images used`} />
           <p className="pp-usage-foot">{`${fmt(remaining)} credits left · resets on the 1st`}</p>
         </div>
       </section>

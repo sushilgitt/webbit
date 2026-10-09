@@ -1,5 +1,5 @@
 import { Icon } from "@shopify/polaris";
-import { Mosaic } from "./Pixels";
+import { Arc } from "./Pixels";
 
 // Branded header card shown at the top of each feature page.
 export default function PageHeader({ icon, eyebrow, title, subtitle }) {
@@ -13,7 +13,7 @@ export default function PageHeader({ icon, eyebrow, title, subtitle }) {
         <p className="pp-page-header-title">{title}</p>
         {subtitle && <p className="pp-page-header-sub">{subtitle}</p>}
       </div>
-      <Mosaic cells={15} />
+      <Arc />
     </div>
   );
 }
