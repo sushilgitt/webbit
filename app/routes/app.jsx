@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { Outlet, useLoaderData, useRouteError } from "react-router";
+import { Outlet, useLoaderData, useNavigate, useRouteError } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { AppProvider as ShopifyAppProvider } from "@shopify/shopify-app-react-router/react";
 import { AppProvider as PolarisAppProvider } from "@shopify/polaris";
-import { authenticate, sessionStorage } from "../shopify.server";
+import { authenticate } from "../shopify.server";
 import { getBillingStateCached } from "../billing.server";
 import { entitled } from "../plans.server";
 
@@ -11,11 +10,10 @@ import "@shopify/polaris/build/esm/styles.css";
 
 import enTranslations from "@shopify/polaris/locales/en.json";
 
-function isExpiredToken(e) {
-  return e?.response?.networkStatusCode === 403 || String(e?.message).includes('Forbidden');
-}
-
 export const loader = async ({ request }) => {
+  // Authenticates with the App Bridge session token (token exchange). An
+  // invalid/expired token is handled by the library itself — it answers with
+  // a retry/bounce Response that App Bridge resolves with a fresh token.
   const { admin, session } = await authenticate.admin(request);
 
   // Free-tier defaults; refined from the live subscription below.
@@ -31,62 +29,47 @@ export const loader = async ({ request }) => {
       altText: entitled(state.plan, "altText"),
     };
   } catch (e) {
-    // Propagate redirect Responses (e.g. OAuth flow initiated by the library),
-    // but treat 4xx Responses as an expired/revoked token — trigger re-auth
-    // instead of letting a raw 403 reach the browser and crash React hydration.
-    if (e instanceof Response) {
-      if (e.status >= 300 && e.status < 400) throw e;
-      await sessionStorage.deleteSession(session.id);
-      // eslint-disable-next-line no-undef
-      return { apiKey: process.env.SHOPIFY_API_KEY || "", needsReauth: true, shop: session.shop };
-    }
-    // Expired token via a plain Error object (networkStatusCode === 403 etc.)
-    if (isExpiredToken(e)) {
-      await sessionStorage.deleteSession(session.id);
-      // eslint-disable-next-line no-undef
-      return { apiKey: process.env.SHOPIFY_API_KEY || "", needsReauth: true, shop: session.shop };
-    }
+    // Auth Responses (re-auth / retry with a new session token) must reach
+    // the library's boundary untouched.
+    if (e instanceof Response) throw e;
     // Any other billing error: fall back to the Free tier defaults.
   }
 
-  // eslint-disable-next-line no-undef
-  return {
-    apiKey: process.env.SHOPIFY_API_KEY || "",
-    features,
-  };
+  return { features };
 };
 
 export default function App() {
-  const { apiKey, needsReauth, shop, features } = useLoaderData();
+  const { features } = useLoaderData();
+  const navigate = useNavigate();
 
-  // Expired token: break out of the Shopify iframe so OAuth runs in the top frame
+  // App Bridge (loaded in root.jsx) fires `shopify:navigate` when the merchant
+  // clicks an item in the admin nav menu; route it through React Router.
   useEffect(() => {
-    if (needsReauth && shop) {
-      window.top.location.href = `/auth?shop=${shop}`;
-    }
-  }, [needsReauth, shop]);
-
-  if (needsReauth) return null;
+    const handleNavigate = (event) => {
+      const href = event.target?.getAttribute?.("href");
+      if (href) navigate(href);
+    };
+    document.addEventListener("shopify:navigate", handleNavigate);
+    return () => document.removeEventListener("shopify:navigate", handleNavigate);
+  }, [navigate]);
 
   return (
-    <ShopifyAppProvider embedded apiKey={apiKey}>
-      <PolarisAppProvider i18n={enTranslations}>
-        {/* No hard paywall: a shop without a paid subscription runs on the Free
-            tier (see getBillingState), and upgrades happen from the Plan page. */}
-        <ui-nav-menu>
-          <a href="/app" rel="home">Overview</a>
-          <a href="/app/optimize">Compress</a>
-          {features?.altText && (
-            <a href="/app/alt-text">Alt Writer</a>
-          )}
-          {features?.pageSpeed && (
-            <a href="/app/speed">Speed Lab</a>
-          )}
-          <a href="/app/plan">Plan</a>
-        </ui-nav-menu>
-        <Outlet />
-      </PolarisAppProvider>
-    </ShopifyAppProvider>
+    <PolarisAppProvider i18n={enTranslations}>
+      {/* No hard paywall: a shop without a paid subscription runs on the Free
+          tier (see getBillingState), and upgrades happen from the Plan page. */}
+      <ui-nav-menu>
+        <a href="/app" rel="home">Overview</a>
+        <a href="/app/optimize">Compress</a>
+        {features?.altText && (
+          <a href="/app/alt-text">Alt Writer</a>
+        )}
+        {features?.pageSpeed && (
+          <a href="/app/speed">Speed Lab</a>
+        )}
+        <a href="/app/plan">Plan</a>
+      </ui-nav-menu>
+      <Outlet />
+    </PolarisAppProvider>
   );
 }
 

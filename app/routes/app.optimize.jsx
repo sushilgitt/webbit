@@ -64,7 +64,10 @@ export async function loader({ request }) {
   try {
     const state = await getBillingStateCached(admin, session.shop);
     plan = state.plan;
-  } catch { /* fall through to Free defaults below */ }
+  } catch (e) {
+    if (e instanceof Response) throw e; // auth retry/re-auth
+    /* otherwise fall through to Free defaults below */
+  }
   let usage = { period: '', imagesUsed: 0 };
   let autoOptimize = false;
   try {
@@ -196,7 +199,8 @@ export async function action({ request }) {
         if (!entitled(plan, 'autoOptimize')) {
           return { success: false, settingUpdated: true, error: 'Autopilot is included with Growth and Pro.' };
         }
-      } catch { /* if billing check fails, fall through and block enabling */
+      } catch (e) { /* if billing check fails, block enabling */
+        if (e instanceof Response) throw e;
         return { success: false, settingUpdated: true, error: 'Could not verify your plan. Try again.' };
       }
     }
